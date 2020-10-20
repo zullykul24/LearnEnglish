@@ -1,5 +1,13 @@
 <?php
 require 'dbconn.php';
+$so_tu_mot_trang = 4;
+if(isset($_GET["trang"])){
+$trang = $_GET["trang"];
+settype($trang, "int");
+}
+else{
+    $trang = 1;
+}
 ?>
 <!DOCTYPE html> 
 <html>
@@ -46,20 +54,51 @@ require 'dbconn.php';
       
       <div id="box-container">
         <div class="box">
-            <div class="box-1"></div>
+            <div class="box-1">
+            <img src="img/ga.jpg">
+            </div>
             <div class="box-2">Từ vựng</div>
             <div class="box-3">cách đọc</div>
             <div class="box-4">Chim thiên nga</div>
             <div class="box-5">Đọc</div>
             <div class="box-6">Chưa học</div>
         </div>
-        <div class="box">
-            <div class="box-1"></div>
-        </div>
-        <div class="box">
-            <div class="box-1"></div>
-        </div>
+        <?php 
+            $from = ($trang - 1)* $so_tu_mot_trang;
+            
+            $qr = "select * from tu_vung limit $from, $so_tu_mot_trang";
+            $ds = mysqli_query($conn, $qr);
+            
+           
+            while($bang_tu_vung = mysqli_fetch_array($ds)){
+            
+           // echo $bang_tu_vung["Tu vung"];
+           echo "<div class='box'>
+           <div class='box-1'><img src='img/ga.jpg'></div>
+           <div class='box-2'>".$bang_tu_vung['Tu vung']."</div>
+           <div class='box-3'>".$bang_tu_vung['Phat am']."</div>
+           <div class='box-4'>".$bang_tu_vung['Nghia']."</div>
+           <div class='box-5'>Đọc</div>
+            <div class='box-6'>Chưa học</div>
+           </div>";
+            }   
+             ?>
+        
+        
       </div>
+      <div id="phan_trang">
+            <?php 
+            $query_tong = "select * from tu_vung";
+            $execute_tong = mysqli_query($conn, $query_tong);
+            $tong_so_tu = mysqli_num_rows($execute_tong);
+            $so_trang = ceil($tong_so_tu/$so_tu_mot_trang);
+            for($i=1; $i<=$so_trang; $i++){
+                echo "<a href='index.php?trang=$i'>Trang $i</a>  ";
+            }
+            
+            ?>
+        </div>
+
    
     </div>
   </body>
