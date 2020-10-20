@@ -1,5 +1,5 @@
 <?php
-require 'dbconn.php'
+require 'dbconn.php';
 
 ?>
 <!DOCTYPE html>

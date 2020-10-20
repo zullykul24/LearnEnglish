@@ -30,6 +30,7 @@ body {
     height: 230px;
     padding: 20px;
     position: relative;
+    box-sizing: border-box;
 
 }
 .lineForm {
@@ -61,7 +62,10 @@ input {
     border:none;
 }
 #guessSignUp {
+   position: absolute;
+    width: 560px;
     margin: auto;
+    top: 210px;
     text-align: center;
 }
 #linkToSignUp {
@@ -74,4 +78,11 @@ input {
 a {
     text-decoration: none;
     color: black;
+}
+#message {
+    display: block;
+    height: 30px;
+    
+    width: 100%;
+    margin-bottom: 5px;
 }

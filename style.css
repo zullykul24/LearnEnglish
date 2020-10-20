@@ -33,9 +33,7 @@ body {
     flex-wrap: wrap;
     
   }
-  nav > ul > li:hover{
-    background-color: blanchedalmond;
-  }
+ 
  
   nav > ul > li {
     list-style: none;
@@ -49,7 +47,7 @@ body {
    
     text-align: center;
     
-    cursor: pointer;
+    
     
   }
   label {

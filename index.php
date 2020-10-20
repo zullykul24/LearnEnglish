@@ -1,3 +1,6 @@
+<?php
+require 'dbconn.php';
+?>
 <!DOCTYPE html> 
 <html>
 <head>
@@ -12,15 +15,34 @@
       </div>
       <nav id="nav-bar">
         <ul>
-          <li><a id="link-1" class="nav-link"  href="#box-1">Tên người dùng</a></li>
-          <li><a id="link-2" class="nav-link" href="#submit">Điểm</a></li>
-          <li><a id="link-3" class="nav-link" href="#header">Đăng xuất</a></li>
+          <li><span id="link-1" class="nav-link">
+          <?php
+    if(isset($_COOKIE['username'])){
+      echo "Xin chào ".$_COOKIE['username'];
+    } else {
+      header("location:signin.php");
+    }
+    ?>
+          </span></li>
+          <li><span id="link-2" class="nav-link">
+          <?php
+          $user = $_COOKIE['username'];
+          $sql = "SELECT diem from tai_khoan WHERE username= '{$user}'";
+          $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
+         
+          echo "Điểm: ".$diem['diem'];
+          
+          ?>
+          
+          </span></li>
+          <li><a id="link-3" class="nav-link" style="cursor:pointer;" href="signout.php">Đăng xuất</a></li>
         </ul>
       </nav>
     </header>
     
     <div id="container">
-  
+    
+    
       
       <div id="box-container">
         <div class="box">
