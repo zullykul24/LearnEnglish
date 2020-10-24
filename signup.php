@@ -28,7 +28,7 @@ require 'dbconn.php';
                     <button type="submit" form="loginForm" id="submitBtn" value="submit" name="submit" >Đăng ký</button>
                     </div>
                 </form>
-                <div id="guessSignUp">
+                <div id="guessSignUp" style = "margin-top:20px;">
                     <span>
                         <?php 
 
@@ -54,13 +54,11 @@ if(isset($_POST['submit'])){
             $addNewUser = "
             INSERT INTO tai_khoan (
             username,
-            password,
-            diem
+            password
             )
             VALUE (
             '{$username}',
-            '{$password}',
-            0
+            '{$password}'
             )";
             $a = mysqli_query($conn, $addNewUser);
             if($a) echo "Đăng ký thành công! Hãy đăng nhập";

@@ -15,6 +15,7 @@ else{
     <meta charset="utf-8">
     <title>Test page</title>
     <link href="style.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
     <header id="header">
@@ -38,7 +39,7 @@ else{
           $sql = "SELECT diem from tai_khoan WHERE username= '{$user}'";
           $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
          
-          echo "Điểm: ".$diem['diem'];
+        //  echo "Điểm: ".$diem['diem'];
           
           ?>
           
@@ -71,6 +72,7 @@ else{
             
            
             while($bang_tu_vung = mysqli_fetch_array($ds)){
+              $word_id = $bang_tu_vung['ID_tu'];
             
            // echo $bang_tu_vung["Tu vung"];
            echo "<div class='box'>
@@ -78,8 +80,8 @@ else{
            <div class='box-2'>".$bang_tu_vung['Tu vung']."</div>
            <div class='box-3'>".$bang_tu_vung['Phat am']."</div>
            <div class='box-4'>".$bang_tu_vung['Nghia']."</div>
-           <div class='box-5'>Đọc</div>
-            <div class='box-6'>Chưa học</div>
+           <div class='box-5'>".$word_id."</div>
+            <div class='box-6' id =".$word_id." >Chưa học</div>
            </div>";
             }   
              ?>
@@ -101,5 +103,49 @@ else{
 
    
     </div>
+<script>
+function updatePoint(){
+      $(document).ready(function(){
+          var url = "updatepoint.php?t=" + Math.random();
+          var data = {"a" : "b"};
+          $("#link-2").load(url,data);
+      });
+      
+}
+updatePoint();
+async function addPoint(id){
+  //ctrl + k + c: comment
+  //ctrl + k + u: uncomment
+        // $(document).ready(function(){
+        //   var url2 = "addpoint.php?t=" + Math.random();
+        //   var data2 = {"action" : "call_this"};
+        //     $(document).load(url2,data2);
+           
+        // });
+        await $.ajax({
+          type: "POST",
+          url: "addpoint.php?t=" + Math.random(),
+          dataType: "html",
+          data: {
+            action: "call_this",
+            word_id: id
+          }
+          
+
+        })
+        await updatePoint(); 
+            
+}
+
+$(document).ready(function(){
+      $(".box-6").click(function(){
+          addPoint($(this).attr('id'));
+          this.style = "background-color: pink; user-select: none";
+          this.innerHTML = "Đã học";
+          $(this).unbind("click");
+        });
+      
+})
+</script>
   </body>
 </html>
