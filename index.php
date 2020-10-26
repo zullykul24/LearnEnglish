@@ -1,6 +1,6 @@
 <?php
 require 'dbconn.php';
-$so_tu_mot_trang = 4;
+$so_tu_mot_trang = 8;
 if(isset($_GET["trang"])){
 $trang = $_GET["trang"];
 settype($trang, "int");
@@ -38,9 +38,6 @@ else{
           $user = $_COOKIE['username'];
           $sql = "SELECT diem from tai_khoan WHERE username= '{$user}'";
           $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
-         
-        //  echo "Điểm: ".$diem['diem'];
-          
           ?>
           
           </span></li>
@@ -54,7 +51,8 @@ else{
     
       
       <div id="box-container">
-        <div class="box">
+      <!-- Cái đầu mẫu thôi, sau này xoá đi-->
+        <!-- <div class="box">
             <div class="box-1">
             <img src="img/ga.jpg">
             </div>
@@ -63,26 +61,51 @@ else{
             <div class="box-4">Chim thiên nga</div>
             <div class="box-5">Đọc</div>
             <div class="box-6">Chưa học</div>
-        </div>
-        <?php 
+        </div> -->
+        <?php  
+
+
+            //get user_id
+            $sqlSelectUserId = "SELECT user_id from tai_khoan where username = '{$user}' ";
+            $userID = mysqli_fetch_array(mysqli_query($conn, $sqlSelectUserId), MYSQLI_ASSOC);
+
             $from = ($trang - 1)* $so_tu_mot_trang;
             
-            $qr = "select * from tu_vung limit $from, $so_tu_mot_trang";
-            $ds = mysqli_query($conn, $qr);
+// Chưa học xếp trước, union với đã học xếp sau
+            $sqlSapXepTu = "select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu vung')
+            UNION 
+            select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu vung')
+            
+            ";
+
+            $sqlDanhSachTu = $sqlSapXepTu." limit $from, $so_tu_mot_trang";
+            $danhSachTu = mysqli_query($conn, $sqlDanhSachTu);
+
+            function status($word){
+              if (mysqli_num_rows(mysqli_query($GLOBALS['conn'],"SELECT * FROM user_word 
+              WHERE user_id = '{$GLOBALS['userID']['user_id']}' AND ID_tu = '{$word}' ")) > 0){
+                return " style = 'background-color:pink' >Đã học";
+            }
+            else {
+              return ">Học";
+            }
+            }
+            
             
            
-            while($bang_tu_vung = mysqli_fetch_array($ds)){
+            while($bang_tu_vung = mysqli_fetch_array($danhSachTu)){
               $word_id = $bang_tu_vung['ID_tu'];
             
-           // echo $bang_tu_vung["Tu vung"];
+           // Danh sách từ chưa học
            echo "<div class='box'>
-           <div class='box-1'><img src='img/ga.jpg'></div>
+           <div class='box-1'><img src='img/".$bang_tu_vung['url_hinhanh']."'></div>
            <div class='box-2'>".$bang_tu_vung['Tu vung']."</div>
            <div class='box-3'>".$bang_tu_vung['Phat am']."</div>
            <div class='box-4'>".$bang_tu_vung['Nghia']."</div>
-           <div class='box-5'>".$word_id."</div>
-            <div class='box-6' id =".$word_id." >Chưa học</div>
-           </div>";
+           <div class='box-5'>Đọc</div>
+            <div class='box-6' id ='".$word_id."'".status($word_id)."</div></div>";
             }   
              ?>
         
@@ -104,6 +127,7 @@ else{
    
     </div>
 <script>
+
 function updatePoint(){
       $(document).ready(function(){
           var url = "updatepoint.php?t=" + Math.random();
@@ -116,12 +140,7 @@ updatePoint();
 async function addPoint(id){
   //ctrl + k + c: comment
   //ctrl + k + u: uncomment
-        // $(document).ready(function(){
-        //   var url2 = "addpoint.php?t=" + Math.random();
-        //   var data2 = {"action" : "call_this"};
-        //     $(document).load(url2,data2);
-           
-        // });
+        
         await $.ajax({
           type: "POST",
           url: "addpoint.php?t=" + Math.random(),
@@ -139,13 +158,21 @@ async function addPoint(id){
 
 $(document).ready(function(){
       $(".box-6").click(function(){
+        if($(this).text() == "Học"){
+          console.log($(this).attr('id'));
           addPoint($(this).attr('id'));
           this.style = "background-color: pink; user-select: none";
           this.innerHTML = "Đã học";
           $(this).unbind("click");
+          }
+          else {
+            
+            $(this).unbind("click");
+          }
         });
       
 })
 </script>
+<script src="index.js"></script>
   </body>
 </html>
