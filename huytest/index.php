@@ -2,8 +2,8 @@
 require 'dbconn.php';
 $so_tu_mot_trang = 8;
 if(isset($_GET["trang"])){
-$trang = $_GET["trang"];
-settype($trang, "int");
+  $trang = $_GET["trang"];
+  settype($trang, "int");
 }
 else{
     $trang = 1;
@@ -19,12 +19,19 @@ else{
 </head>
 <body>
     <header id="header">
+      
       <div class="logo">
       
       </div>
 
 
-<!----------------------------------------------------->
+
+
+
+
+
+<!--------------------------------------------------------->
+
       <div id="searchbar">
         <form action="result.php" method="get">
 
@@ -52,14 +59,29 @@ else{
         </form>
       </div>
 
+        
 
-      <!------------------------------------------->
+
+
+
+
+
+
+
+<!----------------------------------------------------------->
+
+
+
+
+
+
+
 
       <nav id="nav-bar">
         <ul>
           <li><span id="link-1" class="nav-link">
           <?php
-    if(isset($_COOKIE['username'])){
+    if(isset($_COOKIE['username'])){    // is set xem biến có null hay koko
       echo "Xin chào ".$_COOKIE['username'];
     } else {
       header("location:signin.php");
@@ -70,8 +92,11 @@ else{
           <?php
           $user = $_COOKIE['username'];
           $sql = "SELECT diem from tai_khoan WHERE username= '{$user}'";
-          $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
+          $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);  // lấy điểm 
+          
+          echo "Điểm: ".$diem['diem'];  
           ?>
+          
           
           </span></li>
           <li><a id="link-3" class="nav-link" style="cursor:pointer;" href="signout.php">Đăng xuất</a></li>
@@ -79,6 +104,9 @@ else{
       </nav>
     </header>
     
+
+
+
     <div id="container">
     
     

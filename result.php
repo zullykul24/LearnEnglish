@@ -1,30 +1,39 @@
+
 <?php
 require 'dbconn.php';
 $so_tu_mot_trang = 8;
 if(isset($_GET["trang"])){
-$trang = $_GET["trang"];
-settype($trang, "int");
+  $trang = $_GET["trang"];
+  settype($trang, "int");
 }
 else{
     $trang = 1;
 }
 ?>
-<!DOCTYPE html> 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+<meta charset="utf-8">
     <title>Test page</title>
     <link href="style.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <header id="header">
+
+<header id="header">
+      
       <div class="logo">
       
       </div>
 
 
-<!----------------------------------------------------->
+
+
+
+
+
+<!--------------------------------------------------------->
+
       <div id="searchbar">
         <form action="result.php" method="get">
 
@@ -52,14 +61,29 @@ else{
         </form>
       </div>
 
+        
 
-      <!------------------------------------------->
+
+
+
+
+
+
+
+<!----------------------------------------------------------->
+
+
+
+
+
+
+
 
       <nav id="nav-bar">
         <ul>
           <li><span id="link-1" class="nav-link">
           <?php
-    if(isset($_COOKIE['username'])){
+    if(isset($_COOKIE['username'])){    // is set xem biến có null hay koko
       echo "Xin chào ".$_COOKIE['username'];
     } else {
       header("location:signin.php");
@@ -70,8 +94,11 @@ else{
           <?php
           $user = $_COOKIE['username'];
           $sql = "SELECT diem from tai_khoan WHERE username= '{$user}'";
-          $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
+          $diem = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);  // lấy điểm 
+          
+          echo "Điểm: ".$diem['diem'];  
           ?>
+          
           
           </span></li>
           <li><a id="link-3" class="nav-link" style="cursor:pointer;" href="signout.php">Đăng xuất</a></li>
@@ -79,6 +106,9 @@ else{
       </nav>
     </header>
     
+
+
+
     <div id="container">
     
     
@@ -103,7 +133,10 @@ else{
             $userID = mysqli_fetch_array(mysqli_query($conn, $sqlSelectUserId), MYSQLI_ASSOC);
 
             $from = ($trang - 1)* $so_tu_mot_trang;
+        //  //////////////////////////  
             
+
+///////////////////////////////////////
 // Chưa học xếp trước, union với đã học xếp sau
             $sqlSapXepTu = "select * from tu_vung where ID_tu not in 
             (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
@@ -112,10 +145,55 @@ else{
             (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
             
             ";
+         /*   select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = 7 order by 'Tu_vung')
+            and ID_chude = 1 
+            and ((SELECT LOCATE("g", Tu_vung)) > 0 or (SELECT LOCATE("g", Nghia)) > 0)
+            UNION 
+            select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = 7 order by 'Tu_vung')
+            and ID_chude = 1 
+            and ((SELECT LOCATE("g", Tu_vung)) > 0 or (SELECT LOCATE("g", Nghia)) > 0)*/
+//////////
+            $ve1 = " select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+
+            $ve2 = " select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+
+            if(isset($_GET["select"])){
+              $sqlselect = "SELECT * FROM chu_de WHERE Ten_chu_de='{$_GET["select"]}'";
+              $selectsql = mysqli_fetch_array(mysqli_query($conn , $sqlselect), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
+              
+              echo "selectsql = ".$selectsql['ID_chude'];
+
+              $select = " and ID_chude = '{$selectsql['ID_chude']}' ";///// chua xong
+            }
+            else{
+              $select="";
+            }
+
+
+            if(empty($_GET["search"])){
+              $search="";
+            }
+            else{
+              $search =  " and ((SELECT LOCATE('{$_GET['search']}', Tu_vung)) > 0 or (SELECT LOCATE('{$_GET['search']}' , Nghia)) > 0) ";
+            }
+
+//Override
+            $sqlSapXepTu= $ve1.$select.$search." UNION ".$ve2.$select.$search;
+            echo $sqlSapXepTu;
+
+///////////////
 
             $sqlDanhSachTu = $sqlSapXepTu." limit $from, $so_tu_mot_trang";
             $danhSachTu = mysqli_query($conn, $sqlDanhSachTu);
 
+
+
+
+            /////////////////////////////////////////////////////
             function status($word){
               if (mysqli_num_rows(mysqli_query($GLOBALS['conn'],"SELECT * FROM user_word 
               WHERE user_id = '{$GLOBALS['userID']['user_id']}' AND ID_tu = '{$word}' ")) > 0){
@@ -144,7 +222,10 @@ else{
         
         
       </div>
+
+      <
       <div id="phan_trang">
+      <!--------------------------- cần sửa lại --->
             <?php 
             $query_tong = "select * from tu_vung";
             $execute_tong = mysqli_query($conn, $query_tong);
@@ -155,6 +236,9 @@ else{
             }
             
             ?>
+
+
+            
         </div>
 
    
@@ -207,5 +291,45 @@ $(document).ready(function(){
 })
 </script>
 <script src="index.js"></script>
-  </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<?php/* var_dump($_GET);*/ ?>
+<br>
+<?php 
+/*if(isset($_GET["select"]))
+  echo "select duoc set";
+else echo "select ko duoc set";
+if(empty($_GET["search"]))
+  echo "search empty";
+else echo "search ko empty";
+
+ */
+
+?>
+
+<script>
+
+console.log(a);
+    document.getElementsByName("search").value= a ;
+</script>
+
+</body>
 </html>
