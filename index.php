@@ -14,46 +14,23 @@ else{
 <head>
     <meta charset="utf-8">
     <title>Test page</title>
-    <link href="style.css" rel="stylesheet">
+    <link href="huytest/style.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <header id="header">
+
+
+    <div id="header">
       <div class="logo">
-      
+      <a href='index.php' style="text-decoration:none; color: black; max-width:100px ;margin-left:30px;background: -webkit-linear-gradient(cyan, blue);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;" >
+        <span style='font-size:25px'>Learn English </span>
+      </a>
       </div>
 
 
-<!----------------------------------------------------->
-      <div id="searchbar">
-        <form action="result.php" method="get">
 
-          <input type="text" id="ahihi" name="search">
-          
-          <select id="select" name="select">
-            <option  style="display:none" disabled selected value> -- Chon mot chu de -- </option>
-              <?php
-                $sql = "SELECT * from chu_de";
-                $chu_de =  $conn->query($sql);
-                if ($chu_de->num_rows > 0) {
-                  // output data of each row
-                  while($row = $chu_de->fetch_assoc()) {
-                      echo "<option>".$row["Ten_chu_de"]."</option>" ;
-                  }
-              } else {
-                  
-              }
-
-              ?>
-
-          </select>
-
-          <input type="submit" value="Tim kiem">
-        </form>
-      </div>
-
-
-      <!------------------------------------------->
 
       <nav id="nav-bar">
         <ul>
@@ -77,24 +54,41 @@ else{
           <li><a id="link-3" class="nav-link" style="cursor:pointer;" href="signout.php">Đăng xuất</a></li>
         </ul>
       </nav>
-    </header>
+  </div>
     
     <div id="container">
     
     
-      
       <div id="box-container">
-      <!-- Cái đầu mẫu thôi, sau này xoá đi-->
-        <!-- <div class="box">
-            <div class="box-1">
-            <img src="img/ga.jpg">
-            </div>
-            <div class="box-2">Từ vựng</div>
-            <div class="box-3">cách đọc</div>
-            <div class="box-4">Chim thiên nga</div>
-            <div class="box-5">Đọc</div>
-            <div class="box-6">Chưa học</div>
-        </div> -->
+          <div id="searchbar">
+          <form action="index.php" method="get" id="formSearch">
+
+              <input type="text" id="search" name="search" value = <?php if(isset( $_GET['search'])) echo $_GET['search']?>>
+              
+              <select id="select" id="select" name="select" value = <?php echo $_GET['select']?>>
+                <option  style="display:none" disabled selected value>Chọn chủ đề</option>
+                  <?php
+
+                    $sql = "SELECT * from chu_de";
+                    $chu_de =  $conn->query($sql);
+                    if ($chu_de->num_rows > 0) {
+                      // output data of each row
+                      while($row = $chu_de->fetch_assoc()) {
+                          echo "<option>".$row["Ten_chu_de"]."</option>" ;
+                      }
+                  } else {
+                      
+                  }
+
+                  ?>
+
+              </select>
+
+              <input type="submit" value="Tìm kiếm">
+            </form>
+        
+          </div>
+     
         <?php  
 
 
@@ -113,6 +107,38 @@ else{
             
             ";
 
+            $ve1 = " select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+
+            $ve2 = " select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+
+            if(isset($_GET["select"])){
+              $sqlselect = "SELECT * FROM chu_de WHERE Ten_chu_de='{$_GET["select"]}'";
+              $selectsql = mysqli_fetch_array(mysqli_query($conn , $sqlselect), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
+              
+              //echo "selectsql = ".$selectsql['ID_chude'];
+
+              $select = " and ID_chude = '{$selectsql['ID_chude']}' ";///// chua xong
+            }
+            else{
+              $select="";
+            }
+
+
+            if(empty($_GET["search"])){
+              $search="";
+            }
+            else{
+              $search =  " and ((SELECT LOCATE('{$_GET['search']}', Tu_vung)) > 0 or (SELECT LOCATE('{$_GET['search']}' , Nghia)) > 0) ";
+            }
+
+            //Override
+            $sqlSapXepTu= $ve1.$select.$search." UNION ".$ve2.$select.$search;
+          //  echo $sqlSapXepTu;
+
+/////////////////////////////////////////////////////////////////////////
+            
             $sqlDanhSachTu = $sqlSapXepTu." limit $from, $so_tu_mot_trang";
             $danhSachTu = mysqli_query($conn, $sqlDanhSachTu);
 
@@ -144,21 +170,38 @@ else{
         
         
       </div>
+     
       <div id="phan_trang">
+        <div id="page_text">Trang</div>
+        <div id="pages">
             <?php 
-            $query_tong = "select * from tu_vung";
+  
+            $query_tong = $sqlSapXepTu;
+  
             $execute_tong = mysqli_query($conn, $query_tong);
             $tong_so_tu = mysqli_num_rows($execute_tong);
             $so_trang = ceil($tong_so_tu/$so_tu_mot_trang);
             for($i=1; $i<=$so_trang; $i++){
-                echo "<a href='index.php?trang=$i'>Trang $i</a>  ";
-            }
+               
+              if(isset($_GET['select']) && isset($_GET['search'])){
+                echo "<div class='menu'><a href='index.php?search={$_GET['search']}&select={$_GET['select']}&trang=$i'> $i</a></div>  ";
+               }
+              else if(isset($_GET['select'])){
+                echo "<div class='menu'><a href='index.php?search={$_GET['search']}&trang=$i'> $i</a> </div> ";
+              }
+              else{
+                echo "<div class='menu'><a href='index.php?trang=$i'> $i</a> </div> ";
+              }
+              }
+            
             
             ?>
         </div>
+            
 
    
     </div>
+    
 <script>
 
 function updatePoint(){
@@ -207,5 +250,6 @@ $(document).ready(function(){
 })
 </script>
 <script src="index.js"></script>
+
   </body>
 </html>

@@ -3,6 +3,8 @@ body {
     font-size: 20px;
     background-color: #fff;
     box-sizing: border-box;
+    user-select: none;
+    
   }
   .logo {
     width: 60vw;
@@ -12,8 +14,8 @@ body {
     padding: 0;
     
   }
-  header {
-    top: 0;
+  #header {
+   
     position: fixed;
     display: flex;
     background-color: #eee;
@@ -56,27 +58,19 @@ body {
     
   }
   #container {
+   
+  
     display: block;
-    max-width: 1366px;
-    padding: 10px;
-    width: 100%;
-    padding-top: 100px;
-    
+ 
+    margin-top: 50px;
+
   }
   iframe {
     
     display: flex;
     margin: auto;
   }
-  form {
-    padding: 0 20%;
-    display: block;
-    margin: auto;
-    margin-top: 50px;
-    align-content: center;
-    align-items: center;
-    
-  }
+  
 
 
   
@@ -86,6 +80,9 @@ body {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
+    position: absolute;
+   
+   
    
   }
 
@@ -174,4 +171,60 @@ body {
     width: 100%;
     height: 100%;
   }
+  #searchbar {
+    width: 100%;
+    height: 50px;
+    background-color: white;
+    display: block;
+  position: relative;
+   top: 50px;
   
+   margin: auto;
+   margin-bottom: 50px;
+
+  }
+  #formSearch {
+    margin: auto;
+   
+    text-align: center;
+    margin-top: 25px;
+   
+  }
+  #formSearch input, select {
+    font-size: 20px;
+  }
+  #phan_trang{
+    
+    background-color: #eee;
+    height: 100px;
+
+   padding-left: 20px;
+   width: 100%;
+   padding-right: 20px;
+
+  }
+  #phan_trang a{
+   
+    text-decoration: none;
+    color: black;
+
+  }
+  #page_text {
+   line-height: 100px;
+    width: 100px;
+    float: left;
+   
+  }
+  #pages{
+    width: 500px;
+    float: left;
+  }
+  .menu {
+    height: 40px;
+    width: 40px;
+    color: red;
+   border: black 1px solid;
+   display: inline-block;
+   text-align: center;
+   line-height: 40px;
+  }
