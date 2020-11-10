@@ -1,0 +1,188 @@
+body {
+    font-family: sans-serif;
+    font-size: 20px;
+    background-color: #fff;
+    box-sizing: border-box;
+    user-select: none;
+    margin: 0;
+    padding: 0;
+    
+    }
+    #header{
+        width: 100%;
+        height: 50px;
+       background-color: #eee;
+       position: fixed;
+       z-index: 10;
+    }
+    #logo {
+        float: left;
+        line-height: 50px;
+    }
+    #header-info {
+        float: right;
+        margin-right: 40px;
+       
+        
+        margin-top: 12px;
+    }
+    .header-item {
+        margin-left: 70px;
+    } 
+    a#signout-text:hover {
+        color: red!important;
+    }
+    #container{
+        height: 1300px;
+        display: block;
+        position: relative;
+        
+        
+        top: 50px;
+        
+
+
+    }
+    #search-bar {
+        height: 50px;
+        width: 100%;
+        background-color: cyan;
+        top:0px;
+        position: absolute;
+      
+    }
+    #form-search {
+        margin-left: 500px;
+        margin-top: 12px;
+        width: 700px;
+    }
+    #main-container {
+        top: 50px;
+        position: absolute;
+        width: 100%;
+        height: 950px;
+        
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 80px;
+    }
+    .word-block {
+        border: black 1px solid;
+        width: 500px;
+        height: 250px;
+        margin: 50px;
+        position: relative;
+    }
+    .word-image {
+        position: absolute;
+      background-color: red;
+       background-size: cover;
+      background-position: center;
+      background-repeat: none;
+      width: 200px;
+      height: 200px;
+      top: 25px;
+      left: 25px;
+       
+    }
+    .word-text {
+        position: absolute;
+        left: 250px;
+        width: 200px;
+        height: 50px;
+        line-height: 50px;
+        top:40px;
+        
+        text-align: left;
+    }
+    .word-pronunciation {
+       
+        font-size: 18px;
+      position: absolute;
+      text-align: left;
+      left: 250px;
+      width: 200px;
+      height: 25px;
+      line-height: 25px;
+      top:80px;
+    }
+    .word-meaning {
+      position: absolute;
+        left: 250px;
+        width: 200px;
+        height: 50px;
+        line-height: 25px;
+        top:110px;
+        
+        text-align: left;
+    }
+    .word-reading {
+        position: absolute;
+        width: 50px;
+        height: 30px;
+        left: 250px;
+        top: 180px;
+        font-size: 18px;
+        cursor: pointer;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 5px;
+        border: 1px solid red;
+  
+    }
+    .word-status{
+      position: absolute;
+      width: 100px;
+      height: 30px;
+      left: 320px;
+      top: 180px;
+      font-size: 18px;
+      line-height: 30px;
+      text-align: center;
+      border: 1px solid green;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .word-image > img {
+      width: 100%;
+      height: 100%;
+    }
+   
+    #footer{
+        
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        
+        width: 100%;
+        height: 50px;
+        background-color:#eee;
+    }
+    #footer a{
+        text-decoration: none;
+        color: black;
+    }
+    #prev-page, #next-page {
+        
+        height: 30px;
+        width: 150px;
+        text-align: center;
+        border: 1px solid black;
+        line-height: 30px;
+        margin-top: 10px;
+        
+        
+    }
+    #prev-page {
+        margin-left: 300px;
+    }
+   
+    #page-number {
+        height: 30px;
+       
+        
+        line-height: 30px;
+        margin-top: 10px;
+        margin-left: 50px;
+        margin-right: 50px;
+    }

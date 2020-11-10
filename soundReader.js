@@ -3,7 +3,7 @@
 $(document).ready(function(){
 
     if ('speechSynthesis' in window) {
-    $(".box-5").click(function(){
+    $(".word-reading").click(function(){
         var text = $(this).prev().prev().prev().text();
         console.log(text);
         voices = window.speechSynthesis.getVoices()

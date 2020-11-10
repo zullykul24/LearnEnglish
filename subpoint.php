@@ -2,7 +2,7 @@
 require 'dbconn.php';
 
 
-if($_POST['action'] == 'add_point' && $_POST['word_id'] != ''){
+if($_POST['action'] == 'sub_point' && $_POST['word_id'] != ''){
     $usera = $_COOKIE['username'];
 
     //get word_id
@@ -14,7 +14,7 @@ if($_POST['action'] == 'add_point' && $_POST['word_id'] != ''){
     $point = mysqli_fetch_array(mysqli_query($conn, $sqlPointOfWord), MYSQLI_ASSOC);
 
 
-     $sqlUpdateAddPoint = "UPDATE tai_khoan SET diem = diem + {$point['Diem']} WHERE username = '{$usera}'";
+     $sqlUpdateAddPoint = "UPDATE tai_khoan SET diem = diem - {$point['Diem']} WHERE username = '{$usera}'";
      mysqli_query($conn, $sqlUpdateAddPoint);
 
      // get user_id
@@ -23,9 +23,9 @@ if($_POST['action'] == 'add_point' && $_POST['word_id'] != ''){
 
      
 
-
+$sqlDelete = "DELETE FROM user_word WHERE user_id ={$userID['user_id']} AND ID_tu = {$wordID} ";
      $sqlInsert = "INSERT INTO user_word(user_id, ID_tu) VALUES ({$userID['user_id']}, {$wordID})";
-     mysqli_query($conn, $sqlInsert);
+     mysqli_query($conn, $sqlDelete);
 }
 
 ?>
