@@ -56,7 +56,7 @@ else{
 
                     <input type="text" id="search" name="search" placeholder="Nhập từ cần tìm" value = <?php if(isset( $_GET['search'])) echo $_GET['search']?>>
                     
-                    <select id="select" id="select" name="select" value = <?php echo $_GET['select']?> >
+                    <select id="select" name="select" value = <?php if(isset( $_GET['select'])) echo $_GET['select']?> >
                       <option  style="display:none" disabled selected value>Chọn chủ đề</option>
                       <?php
 
@@ -74,6 +74,24 @@ else{
                         ?>
       
                     </select>
+                    <select id="dif" name="dif" value = <?php echo $_GET['dif']?> >
+                      <option  style="display:none" disabled selected value>Chọn độ khó</option>
+                      <?php
+
+                        $sql = "SELECT * from do_kho";
+                        $chu_de =  $conn->query($sql);
+                        if ($chu_de->num_rows > 0) {
+                        // output data of each row
+                        while($row = $chu_de->fetch_assoc()) {
+                            echo "<option>".$row["Ten_do_kho"]."</option>" ;
+                        }
+                        } else {
+                        
+                        }
+
+                        ?>
+      
+                    </select>
       
                     <input type="submit" value="Tìm kiếm">
                   </form>
@@ -83,81 +101,95 @@ else{
             <?php  
 
 
-//get user_id
-$sqlSelectUserId = "SELECT user_id from tai_khoan where username = '{$user}' ";
-$userID = mysqli_fetch_array(mysqli_query($conn, $sqlSelectUserId), MYSQLI_ASSOC);
+            //get user_id
+            $sqlSelectUserId = "SELECT user_id from tai_khoan where username = '{$user}' ";
+            $userID = mysqli_fetch_array(mysqli_query($conn, $sqlSelectUserId), MYSQLI_ASSOC);
 
-$from = ($trang - 1)* $so_tu_mot_trang;
+            $from = ($trang - 1)* $so_tu_mot_trang;
 
-// Chưa học xếp trước, union với đã học xếp sau
-$sqlSapXepTu = "select * from tu_vung where ID_tu not in 
-(select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
-UNION 
-select * from tu_vung where ID_tu in 
-(select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
+            // Chưa học xếp trước, union với đã học xếp sau
+         /*   $sqlSapXepTu = "select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
+            UNION 
+            select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
 
-";
+            ";*/
 
-$ve1 = " select * from tu_vung where ID_tu not in 
-(select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+            $ve1 = " select * from tu_vung where ID_tu not in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
 
-$ve2 = " select * from tu_vung where ID_tu in 
-(select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+            $ve2 = " select * from tu_vung where ID_tu in 
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
 
-if(isset($_GET["select"])){
-  $sqlselect = "SELECT * FROM chu_de WHERE Ten_chu_de='{$_GET["select"]}'";
-  $selectsql = mysqli_fetch_array(mysqli_query($conn , $sqlselect), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
-  
-  //echo "selectsql = ".$selectsql['ID_chude']";
+            if(isset($_GET["select"])){
+              $sqlselect = "SELECT * FROM chu_de WHERE Ten_chu_de='{$_GET["select"]}'";
+              $selectsql = mysqli_fetch_array(mysqli_query($conn , $sqlselect), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
+              
+              //echo "selectsql = ".$selectsql['ID_chude']";
 
-  $select = " and ID_chude = '{$selectsql['ID_chude']}' ";///// chua xong
-}
-else{
-  $select="";
-}
+              $select = " and ID_chude = '{$selectsql['ID_chude']}' ";///// chua xong
+            }
+            else{
+              $select="";
+            }
+            
+            if(isset($_GET["dif"])){
+              $sqldif = "SELECT * FROM do_kho WHERE Ten_do_kho='{$_GET["dif"]}'";
+              $difsql = mysqli_fetch_array(mysqli_query($conn , $sqldif), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
+              
+              
 
-
-if(empty($_GET["search"])){
-  $search="";
-}
-else{
-  $search =  " and ((SELECT LOCATE('{$_GET['search']}', Tu_vung)) > 0 or (SELECT LOCATE('{$_GET['search']}' , Nghia)) > 0) ";
-}
-
-//Override
-$sqlSapXepTu= $ve1.$select.$search." UNION ".$ve2.$select.$search;
-//  echo $sqlSapXepTu;
-
-/////////////////////////////////////////////////////////////////////////
-
-$sqlDanhSachTu = $sqlSapXepTu." limit $from, $so_tu_mot_trang";
-$danhSachTu = mysqli_query($conn, $sqlDanhSachTu);
-
-function status($word){
-  if (mysqli_num_rows(mysqli_query($GLOBALS['conn'],"SELECT * FROM user_word 
-  WHERE user_id = '{$GLOBALS['userID']['user_id']}' AND ID_tu = '{$word}' ")) > 0){
-    return " style = 'background-color:pink' >Đã học";
-}
-else {
-  return ">Học";
-}
-}
+              $dif = " and ID_dokho = '{$difsql['ID_dokho']}' ";
+            }
+            else{
+              $dif="";
+            }
 
 
 
-while($bang_tu_vung = mysqli_fetch_array($danhSachTu)){
-  $word_id = $bang_tu_vung['ID_tu'];
 
-// Danh sách từ chưa học
-echo "<div class='word-block'>
-<div class='word-image'><img src='img/".$bang_tu_vung['url_hinhanh']."'></div>
-<div class='word-text'>".$bang_tu_vung['Tu_vung']."</div>
-<div class='word-pronunciation'>".$bang_tu_vung['Phat_am']."</div>
-<div class='word-meaning'>".$bang_tu_vung['Nghia']."</div>
-<div class='word-reading'>Đọc</div>
-<div class='word-status' id ='".$word_id."'".status($word_id)."</div></div>";
-}   
- ?>
+            if(empty($_GET["search"])){
+              $search="";
+            }
+            else{
+              $search =  " and ((SELECT LOCATE('{$_GET['search']}', Tu_vung)) > 0 or (SELECT LOCATE('{$_GET['search']}' , Nghia)) > 0) ";
+            }
+
+            //Override
+            $sqlSapXepTu= $ve1.$select.$search.$dif." UNION ".$ve2.$select.$search.$dif;
+            //  echo $sqlSapXepTu;
+
+            /////////////////////////////////////////////////////////////////////////
+
+            $sqlDanhSachTu = $sqlSapXepTu." limit $from, $so_tu_mot_trang";
+            $danhSachTu = mysqli_query($conn, $sqlDanhSachTu);
+
+            function status($word){
+              if (mysqli_num_rows(mysqli_query($GLOBALS['conn'],"SELECT * FROM user_word 
+              WHERE user_id = '{$GLOBALS['userID']['user_id']}' AND ID_tu = '{$word}' ")) > 0){
+                return " style = 'background-color:pink' >Đã học";
+              }
+              else {
+                return ">Học";
+              }
+            }
+
+
+
+            while($bang_tu_vung = mysqli_fetch_array($danhSachTu)){
+              $word_id = $bang_tu_vung['ID_tu'];
+
+              // Danh sách từ chưa học
+              echo "<div class='word-block'>
+              <div class='word-image'><img src='img/".$bang_tu_vung['url_hinhanh']."'></div>
+              <div class='word-text'>".$bang_tu_vung['Tu_vung']."</div>
+              <div class='word-pronunciation'>".$bang_tu_vung['Phat_am']."</div>
+              <div class='word-meaning'>".$bang_tu_vung['Nghia']."</div>
+              <div class='word-reading'>Đọc</div>
+              <div class='word-status' id ='".$word_id."'".status($word_id)."</div></div>";
+            }   
+            ?>
             </div>
             
         </div>
@@ -172,12 +204,12 @@ echo "<div class='word-block'>
         
         
         ?> 
-            <div id="prev-page"><a href = "index.php
-            
-            ?trang=<?php 
+            <div id="prev-page"><a href = "index.php?trang=<?php 
             if($trang >1)echo $trang - 1;
             else echo "1"; 
+
             
+            /*
             if(isset($_GET['select']) && isset($_GET['search'])){
                 echo "&search={$_GET['search']}&select={$_GET['select']}";
             }
@@ -186,14 +218,30 @@ echo "<div class='word-block'>
             }
             else if (isset($_GET['search'])){
                 echo "&search={$_GET['search']}";
+            }*/
+            $echo_out="";
+            if (isset($_GET['select'])){
+              $echo_out .= "&select={$_GET['select']}";
             }
+            if (isset($_GET['dif'])){
+              $echo_out .= "&dif={$_GET['dif']}";
+            }
+            if (isset($_GET['search'])){
+              $echo_out .= "&search={$_GET['search']}";
+            }
+
+            echo $echo_out;
+
+
+
             ?>
             ">Trang trước</a></div>
+
             <div id="page-number"> Trang <?php echo $trang ?> tren tong so <?php echo $so_trang ?> trang</div>
             <div id="next-page"><a href = "index.php?trang=<?php
              if($trang < $so_trang)echo $trang + 1;
              else echo $trang; 
-             
+             /*
              if(isset($_GET['select']) && isset($_GET['search'])){
                 echo "&search={$_GET['search']}&select={$_GET['select']}";
             }
@@ -203,6 +251,9 @@ echo "<div class='word-block'>
                 else if (isset($_GET['search'])){
                     echo "&search={$_GET['search']}";
                 }
+              */
+              echo $echo_out;
+
             ?>
              ">Trang sau</a></div>
         </div>
