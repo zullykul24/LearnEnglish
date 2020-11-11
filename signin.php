@@ -1,6 +1,7 @@
 <?php
 require 'dbconn.php';
-
+ob_start ();
+if(isset($_COOKIE['username'])){header("location:index.php");}
 ?>
 <!DOCTYPE html>
 <html>
@@ -49,20 +50,15 @@ require 'dbconn.php';
                                     echo "Mật khẩu sai";
                                 }
                                 else {
+                                    header("location:index.php", true, 301);
                                     setcookie("username", $_POST['username'], time()+3000, "/","", 0);
-                                   
-                                    header("location:index.php");
-                                   
                                     
+                                    exit;
                                 }
                             }
                             
                     }
-                        
-                        
-                        
-                        
-                        ?>
+ ob_flush ();?>
                     </p>
                 </div>
                     <span>Chưa có tài khoản? </span><span id="linkToSignUp"><u>

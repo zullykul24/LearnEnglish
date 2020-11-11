@@ -1,4 +1,4 @@
 <?php
-session_destroy();
+setcookie("username", "", time()+3000, "/","", 0);
 header("location:signin.php");
 ?>
