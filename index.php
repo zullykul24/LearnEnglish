@@ -178,13 +178,13 @@ echo "<div class='word-block'>
             if($trang >1)echo $trang - 1;
             else echo "1"; 
             
-            if(isset($_GET['select']) && isset($_GET['search'])){
+           /* if(isset($_GET['select']) && isset($_GET['search'])){
                 echo "&search={$_GET['search']}&select={$_GET['select']}";
-            }
-            else if (isset($_GET['select'])){
+            }*/
+            if (isset($_GET['select'])){
                 echo "&select={$_GET['select']}";
             }
-            else if (isset($_GET['search'])){
+             if (isset($_GET['search'])){
                 echo "&search={$_GET['search']}";
             }
             ?>
@@ -194,13 +194,13 @@ echo "<div class='word-block'>
              if($trang < $so_trang)echo $trang + 1;
              else echo $trang; 
              
-             if(isset($_GET['select']) && isset($_GET['search'])){
+            /* if(isset($_GET['select']) && isset($_GET['search'])){
                 echo "&search={$_GET['search']}&select={$_GET['select']}";
-            }
-                else if (isset($_GET['select'])){
+            }*/
+                 if (isset($_GET['select'])){
                     echo "&select={$_GET['select']}";
                 }
-                else if (isset($_GET['search'])){
+                 if (isset($_GET['search'])){
                     echo "&search={$_GET['search']}";
                 }
             ?>
