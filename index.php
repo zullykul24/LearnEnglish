@@ -54,10 +54,13 @@ else{
             <div id="search-bar">
                 <form action="index.php" method="get" id="form-search">
 
-                    <input type="text" id="search" name="search" placeholder="Nhập từ cần tìm" value = <?php if(isset( $_GET['search'])) echo $_GET['search']?>>
+                    <input type="text" id="search" name="search" placeholder="Nhập từ cần tìm" value = <?php if(isset( $_GET['search']) && $_GET['search'] != "") echo htmlspecialchars($_GET['search'] ?? '', ENT_QUOTES);?>>
                     
-                    <select id="select" name="select" value = <?php if(isset( $_GET['select'])) echo $_GET['select']?> >
-                      <option  style="display:none" disabled selected value>Chọn chủ đề</option>
+                    <select id="select" name="select" >
+                      <option  style="display:none" disabled selected value>
+                      <?php if(isset($_GET['select']) && $_GET['select'] != "") echo $_GET['select'];
+                      else echo "Chọn chủ đề"?>
+                      </option>
                       <?php
 
                         $sql = "SELECT * from chu_de";
@@ -74,15 +77,18 @@ else{
                         ?>
       
                     </select>
-                    <select id="dif" name="dif" value = <?php echo $_GET['dif']?> >
-                      <option  style="display:none" disabled selected value>Chọn độ khó</option>
+                    <select id="dif" name="dif"  >
+                      <option  style="display:none" disabled selected value >
+                      <?php if(isset($_GET['dif']) && $_GET['dif'] != "") echo $_GET['dif'];
+                      else echo "Chọn độ khó"?>
+                     </option>
                       <?php
 
                         $sql = "SELECT * from do_kho";
-                        $chu_de =  $conn->query($sql);
-                        if ($chu_de->num_rows > 0) {
+                        $do_kho =  $conn->query($sql);
+                        if ($do_kho->num_rows > 0) {
                         // output data of each row
-                        while($row = $chu_de->fetch_assoc()) {
+                        while($row = $do_kho->fetch_assoc()) {
                             echo "<option>".$row["Ten_do_kho"]."</option>" ;
                         }
                         } else {
@@ -92,9 +98,19 @@ else{
                         ?>
       
                     </select>
+                    <select id="status" name="status"  >
+                      <option  style="display:none" disabled selected value >
+                      <?php if(isset($_GET['status']) && $_GET['status'] != "") echo $_GET['status'];
+                      else echo "Tất cả từ"?>
+                     </option>
+                      <option>Chưa học</option>
+                      <option>Đã học</option>
+      
+                    </select>
       
                     <input type="submit" value="Tìm kiếm">
                   </form>
+                  
             </div>
             <div id="main-container">
                
@@ -107,26 +123,18 @@ else{
 
             $from = ($trang - 1)* $so_tu_mot_trang;
 
-            // Chưa học xếp trước, union với đã học xếp sau
-         /*   $sqlSapXepTu = "select * from tu_vung where ID_tu not in 
-            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
-            UNION 
-            select * from tu_vung where ID_tu in 
-            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung')
-
-            ";*/
 
             $ve1 = " select * from tu_vung where ID_tu not in 
-            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' ) ";
 
             $ve2 = " select * from tu_vung where ID_tu in 
-            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' order by 'Tu_vung') ";
+            (select ID_tu from user_word WHERE user_id = '{$userID['user_id']}' ) ";
 
             if(isset($_GET["select"])){
               $sqlselect = "SELECT * FROM chu_de WHERE Ten_chu_de='{$_GET["select"]}'";
               $selectsql = mysqli_fetch_array(mysqli_query($conn , $sqlselect), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
               
-              //echo "selectsql = ".$selectsql['ID_chude']";
+              
 
               $select = " and ID_chude = '{$selectsql['ID_chude']}' ";///// chua xong
             }
@@ -134,7 +142,7 @@ else{
               $select="";
             }
             
-            if(isset($_GET["dif"])){
+            if(isset($_GET["dif"]) && $_GET['dif'] != ""){
               $sqldif = "SELECT * FROM do_kho WHERE Ten_do_kho='{$_GET["dif"]}'";
               $difsql = mysqli_fetch_array(mysqli_query($conn , $sqldif), MYSQLI_ASSOC);/// sua lai ten cot 'Ten chu de' -> Ten_chu_de
               
@@ -153,11 +161,18 @@ else{
               $search="";
             }
             else{
+            
               $search =  " and ((SELECT LOCATE('{$_GET['search']}', Tu_vung)) > 0 or (SELECT LOCATE('{$_GET['search']}' , Nghia)) > 0) ";
             }
+            if(isset($_GET['status'])){
+              if($_GET['status'] == "Chưa học")  $sqlSapXepTu= $ve1.$select.$search.$dif;
+              else if($_GET['status'] == "Đã học")  $sqlSapXepTu= $ve2.$select.$search.$dif;
+              else $sqlSapXepTu= $ve1.$select.$search.$dif." UNION ".$ve2.$select.$search.$dif;
+            } else {
 
             //Override
             $sqlSapXepTu= $ve1.$select.$search.$dif." UNION ".$ve2.$select.$search.$dif;
+            }
             //  echo $sqlSapXepTu;
 
             /////////////////////////////////////////////////////////////////////////
@@ -204,67 +219,53 @@ else{
         
         
         ?> 
-            <div id="prev-page"><a href = "index.php?trang=<?php 
+            <a href = "index.php?trang=<?php 
             if($trang >1)echo $trang - 1;
             else echo "1"; 
 
             
-<<<<<<< HEAD
-           /* if(isset($_GET['select']) && isset($_GET['search'])){
-=======
-            /*
-            if(isset($_GET['select']) && isset($_GET['search'])){
->>>>>>> 4b3ca308ac708c4ee58debebe83b53bec9d7bbbc
-                echo "&search={$_GET['search']}&select={$_GET['select']}";
-            }*/
-            if (isset($_GET['select'])){
-                echo "&select={$_GET['select']}";
-            }
-             if (isset($_GET['search'])){
-                echo "&search={$_GET['search']}";
-            }*/
-            $echo_out="";
-            if (isset($_GET['select'])){
-              $echo_out .= "&select={$_GET['select']}";
-            }
-            if (isset($_GET['dif'])){
-              $echo_out .= "&dif={$_GET['dif']}";
-            }
-            if (isset($_GET['search'])){
-              $echo_out .= "&search={$_GET['search']}";
-            }
-
-            echo $echo_out;
+           
+            if (isset($_GET['select']) && $_GET['select'] != ""){
+              echo "&select={$_GET['select']}";
+          }
+           if (isset($_GET['search']) && $_GET['search'] != ""){
+              echo "&search={$_GET['search']}";
+          }
+          if (isset($_GET['dif']) && $_GET['dif'] != ""){
+            echo "&dif={$_GET['dif']}";
+        }
+        if (isset($_GET['status']) && $_GET['status'] != ""){
+          echo "&status={$_GET['status']}";
+      }
 
 
 
             ?>
-            ">Trang trước</a></div>
+            "><div id="prev-page">Trang trước</div></a>
 
-            <div id="page-number"> Trang <?php echo $trang ?> tren tong so <?php echo $so_trang ?> trang</div>
-            <div id="next-page"><a href = "index.php?trang=<?php
+            <div id="page-number"> Trang <?php echo $trang ?> trên tổng số <?php echo $so_trang ?> trang</div>
+            <a href = "index.php?trang=<?php
              if($trang < $so_trang)echo $trang + 1;
              else echo $trang; 
-<<<<<<< HEAD
              
-            /* if(isset($_GET['select']) && isset($_GET['search'])){
-=======
-             /*
-             if(isset($_GET['select']) && isset($_GET['search'])){
->>>>>>> 4b3ca308ac708c4ee58debebe83b53bec9d7bbbc
-                echo "&search={$_GET['search']}&select={$_GET['select']}";
-            }*/
-                 if (isset($_GET['select'])){
-                    echo "&select={$_GET['select']}";
-                }
-                 if (isset($_GET['search'])){
-                    echo "&search={$_GET['search']}";
-                }
-              */
-              echo $echo_out;
+           
+             if (isset($_GET['select']) && $_GET['select'] != ""){
+              echo "&select={$_GET['select']}";
+          }
+           if (isset($_GET['search']) && $_GET['search'] != ""){
+              echo "&search={$_GET['search']}";
+          }
+          if (isset($_GET['dif']) && $_GET['dif'] != ""){
+            echo "&dif={$_GET['dif']}";
+        }
+        if (isset($_GET['status']) && $_GET['status'] != ""){
+          echo "&status={$_GET['status']}";
+      }
+              
+              
 
             ?>
-             ">Trang sau</a></div>
+             "><div id="next-page">Trang sau</div></a>
         </div>
         <script>
 
@@ -321,7 +322,7 @@ $(document).ready(function(){
           addPoint($(this).attr('id'));
           this.style = "background-color: pink";
           this.innerHTML = "Đã học";
-         // $(this).unbind("click");
+   
           }
           else {
             console.log($(this).attr('id'));
@@ -329,7 +330,7 @@ $(document).ready(function(){
           this.style = "background-color: none";
           this.innerHTML = "Học";
             
-            //$(this).unbind("click");
+          
           }
         });
       
