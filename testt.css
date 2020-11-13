@@ -1,0 +1,7 @@
+div#score{
+    background-color: #4CAF50;
+      float: left;
+      min-height: 500px;
+      min-width:300px;
+      position: inline;
+  }

@@ -113,7 +113,33 @@ else{
                   
             </div>
             <div id="main-container">
-               
+            <!-----------------------------------------------------danh sach diem cao----------->
+              <div id="score">
+                <table>
+                  <tr>
+                    <td>
+                      Danh sách điểm cao:
+                    <td>
+                  </tr>
+                  
+                  <?php 
+                    $truyvan= "select username , diem from tai_khoan order by diem desc limit 10";
+                    $diemcao = mysqli_query($conn, $truyvan);
+                    while($danhsachdiemcao = mysqli_fetch_array($diemcao)){
+                      $diemtungnguoi = $danhsachdiemcao['diem'];
+                      $nguoidung = $danhsachdiemcao['username'];
+        
+                      // Danh sách từ chưa học
+                      echo "<tr><td>".$nguoidung."</td><td>".$diemtungnguoi."</td></tr>";
+                    }
+
+
+
+                  ?>
+                </table>
+              </div>
+
+              <!------------------------------------------------------------------------------------->
             <?php  
 
 

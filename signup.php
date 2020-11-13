@@ -64,7 +64,7 @@ if(isset($_POST['submit'])){
             '{$hash_password}'
             )";
             $a = mysqli_query($conn, $addNewUser);
-            if($a) echo "Đăng ký thành công! Hãy đăng nhập";
+            if($a) echo "Đăng ký thành công! Hãy <a style='text-decoration: underline;' href='signin.php'> đăng nhập</a>";
         }
 }
                         
