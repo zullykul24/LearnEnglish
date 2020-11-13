@@ -51,6 +51,9 @@ if(isset($_POST['submit'])){
             echo "Tên đăng nhập này đã có người dùng.";
         }
         else {
+
+            $hash_password = password_hash($password, PASSWORD_DEFAULT); // mã hóa password 
+
             $addNewUser = "
             INSERT INTO tai_khoan (
             username,
@@ -58,7 +61,7 @@ if(isset($_POST['submit'])){
             )
             VALUE (
             '{$username}',
-            '{$password}'
+            '{$hash_password}'
             )";
             $a = mysqli_query($conn, $addNewUser);
             if($a) echo "Đăng ký thành công! Hãy đăng nhập";

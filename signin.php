@@ -35,6 +35,7 @@ if(isset($_COOKIE['username'])){header("location:index.php");}
                         <?php 
                         if(isset($_POST['username'])) $username = addslashes($_POST['username']);
                         if(isset($_POST['password'])) $password = addslashes($_POST['password']);
+                            
 
                         if(isset($_POST['submit'])){
 
@@ -46,7 +47,7 @@ if(isset($_COOKIE['username'])){header("location:index.php");}
                             }
                             else {
                                 $row = mysqli_fetch_array(mysqli_query($conn, $sql), MYSQLI_ASSOC);
-                                if ($password != $row['password']) {
+                                if (!password_verify($password,$row['password'])) {
                                     echo "Mật khẩu sai";
                                 }
                                 else {
