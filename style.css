@@ -1,0 +1,35 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+}
+.word-block {
+   
+    max-width: 400px;
+    
+    border: black 1px solid;
+}
+.word-status {
+    display: inline-block;
+}
+.word-status, .word-reading:hover{
+    cursor: pointer;
+}
+
+#header span{
+    font-size: 20px!important;
+}
+a#signout-text {
+    text-decoration: none;
+    color: red!important;
+}
+#logo a{
+    text-decoration: none;
+    font-size: 1rem;
+    color: blue;
+}
+
+.word-image img {
+    min-width: 90px;
+}

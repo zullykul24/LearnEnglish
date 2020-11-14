@@ -17,10 +17,6 @@ else{
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href = "newstyle.css">
-    <!-------------------------------------------------------->
-  
-    
-<!----------------------------------------------------------->
     </head>
     <body>
         <div id="header">
@@ -117,33 +113,7 @@ else{
                   
             </div>
             <div id="main-container">
-            <!--------------------------------------------------->
-            <div id="score">
-              <table>
-                <tr>
-                  <td>
-                    Danh sách điểm cao:
-                  <td>
-                </tr>
-                
-                <?php 
-                  
-                  $truyvan= "select username , diem from tai_khoan order by diem desc limit 10";
-                  $diemcao = mysqli_query($conn, $truyvan);
-                  while($danhsachdiemcao = mysqli_fetch_array($diemcao)){
-                    $diemtungnguoi = $danhsachdiemcao['diem'];
-                    $nguoidung = $danhsachdiemcao['username'];
-      
-                    // Danh sách từ chưa học
-                    echo "<tr><td>".$nguoidung."</td><td>".$diemtungnguoi."</td></tr>";
-                  }
-
-
-
-                ?>
-              </table>
-            </div>
-<!------------------------------------------------------------------->
+               
             <?php  
 
 
@@ -271,7 +241,7 @@ else{
 
 
             ?>
-            "><div id="prev-page" class="col">Trang trước</div></a>
+            "><div id="prev-page">Trang trước</div></a>
 
             <div id="page-number"> Trang <?php echo $trang ?> trên tổng số <?php echo $so_trang ?> trang</div>
             <a href = "index.php?trang=<?php
@@ -295,7 +265,7 @@ else{
               
 
             ?>
-             "><div id="next-page" class="col">Trang sau</div></a>
+             "><div id="next-page">Trang sau</div></a>
         </div>
         <script>
 

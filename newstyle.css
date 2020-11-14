@@ -22,12 +22,15 @@ body {
     #header-info {
         float: right;
         margin-right: 40px;
+        width: 800px;
+        
        
         
         margin-top: 12px;
     }
     .header-item {
         margin-left: 70px;
+        
     } 
     a#signout-text:hover {
         color: red!important;
