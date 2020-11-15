@@ -8,4 +8,5 @@ if($_POST['action'] == 'update_point'){
    
    echo "Điểm: ".$diem['diem'];
 }
+
 ?>

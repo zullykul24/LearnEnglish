@@ -35,9 +35,10 @@ else{
                     <span id="name" class="header-item">
                     <?php
                     if(isset($_COOKIE['username'])){
-                    echo "Xin chào ".$_COOKIE['username'];
+                      if($_COOKIE['username'] == 'admin')header("location:admin.php", true, 301);
+                      else echo "Xin chào ".$_COOKIE['username'];
                     } else {
-                    header("location:signin.php");
+                    header("location:signin.php", true, 301);
                     }
                     ?>
                     </span>
@@ -120,6 +121,7 @@ else{
                 <input type="submit" class="btn btn-primary " value="Tìm kiếm"></div>
               </div>
               </form>
+              
               </div>
               
               
@@ -249,7 +251,7 @@ else{
             </div>
             
             <div class="col-12 col-lg-3 ">
-                <div class="col-12 py-2 text-center">Bảng xếp hạng top 5</div>
+                <div class="col-12 py-2 text-center">Bảng xếp hạng top 10</div>
                 <table class="table">
                     <thead>
                         <tr>
@@ -258,10 +260,10 @@ else{
                             <th scope="col">Diem</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="top-score-container">
                     
                     <?php 
-                    $truyvan= "select username , diem from tai_khoan order by diem desc limit 5";
+                    $truyvan= "select username , diem from tai_khoan order by diem desc limit 10";
                     $diemcao = mysqli_query($conn, $truyvan);
                    $array = array();
                    while($danhsachdiemcao = mysqli_fetch_array($diemcao)){
@@ -269,7 +271,7 @@ else{
                    }
                    for($i=0;$i<count($array);$i++){
                     echo
-                    "<tr class='text-danger'>
+                    "<tr class='text-success'>
                         <th scope='row'>".($i+1)."</th>
                         <td>".$array[$i][0]."</td>
                         <td>".$array[$i][1]."</td>
@@ -299,13 +301,7 @@ else{
                     <td>".$diem['diem']."</td>
                     </tr>";
                    }
-
-                  
                     ?>
-                    
-                    
-                    
-                    
                     </tbody>
                   </table>
             </div>
@@ -366,11 +362,23 @@ function updatePoint(){
       $(document).ready(function(){
           var url = "updatepoint.php?t=" + Math.random();
           var data = {"action" : "update_point"};
+         
           $("#point").load(url,data);
+          
       });
       
 }
-updatePoint();
+function updateTop(){
+  $(document).ready(function(){
+          var url = "updatetop.php?t=" + Math.random();
+          
+          var updateTopScore = {"top": "update_top"};
+          
+          $("#top-score-container").load(url, updateTopScore);
+      });
+}
+//updatePoint();
+//updateTop();
 async function addPoint(id){
   //ctrl + k + c: comment
   //ctrl + k + u: uncomment
@@ -387,6 +395,7 @@ async function addPoint(id){
 
         })
         await updatePoint(); 
+        await updateTop();
             
 }
 async function subPoint(id){
@@ -405,6 +414,7 @@ async function subPoint(id){
 
         })
         await updatePoint(); 
+        await updateTop();
             
 }
 
